@@ -31,13 +31,23 @@
 Клас Record:
     Реалізовано зберігання об'єкта Name в окремому атрибуті.
     Реалізовано зберігання списку об'єктів Phone в окремому атрибуті.
-    Реалізовано методи для додавання - add_phone/видалення - remove_phone/редагування - edit_phone/пошуку об'єктів Phone - find_phone.
+    Реалізовано методи для
+        додавання - add_phone/
+        видалення - remove_phone/
+        редагування - edit_phone/
+        пошуку об'єктів Phone - find_phone.
 
 Клас Phone:
     Реалізовано валідацію номера телефону (має бути перевірка на 10 цифр).
 """
 
 from collections import UserDict
+import re
+
+from colorama import init, Fore
+
+init(autoreset=True)
+ERROR = Fore.RED
 
 
 class Field:
@@ -49,13 +59,17 @@ class Field:
 
 
 class Name(Field):
-    # реалізація класу
     pass
 
 
 class Phone(Field):
-    # реалізація класу
-    pass
+    def __init__(self, value):
+        if not re.fullmatch(r"\d{10}", value):
+            print(
+                ERROR
+                + f'You input: {value}\nError: "Phone number format <only 10 digits>."'
+            )
+        super().__init__(value)
 
 
 class Record:
@@ -63,15 +77,44 @@ class Record:
         self.name = Name(name)
         self.phones = []
 
-    # реалізація класу
+    def add_phone(self, phone):
+        self.phones.append(Phone(phone))
+
+    def remove_phone(self, phone):
+        self.phones = [p for p in self.phones if p.value != phone]
+
+    def edit_phone(self, old_phone, new_phone):
+        for phone in self.phones:
+            if phone.value == old_phone:
+                phone.value = Phone(new_phone).value
+                return
+        print(
+            ERROR + f'You want to change: {old_phone}\nError: "Phone number not found."'
+        )
+
+    def find_phone(self, search_phone):
+        for phone in self.phones:
+            if phone.value == search_phone:
+                return phone
+        return None
 
     def __str__(self):
         return f"Contact name: {self.name.value}, phones: {'; '.join(p.value for p in self.phones)}"
 
 
 class AddressBook(UserDict):
-    # реалізація класу
-    pass
+    def add_record(self, record):
+        self.data[record.name.value] = record
+
+    def find(self, name):
+        return self.data.get(name, None)
+
+    def delete(self, name):
+        if name in self.data:
+            del self.data[name]
+
+    def __str__(self):
+        return "\n".join(str(record) for record in self.data.values())
 
 
 # Створення нової адресної книги
@@ -80,7 +123,7 @@ book = AddressBook()
 # Створення запису для John
 john_record = Record("John")
 john_record.add_phone("1234567890")
-john_record.add_phone("5555555555")
+john_record.add_phone("555555555")
 
 # Додавання запису John до адресної книги
 book.add_record(john_record)

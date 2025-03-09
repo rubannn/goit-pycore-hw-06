@@ -78,12 +78,15 @@ class Record:
         self.phones = []
 
     def add_phone(self, phone):
+        """Додавання телефонів"""
         self.phones.append(Phone(phone))
 
     def remove_phone(self, phone):
+        """Видалення телефонів"""
         self.phones = [p for p in self.phones if p.value != phone]
 
     def edit_phone(self, old_phone, new_phone):
+        """Редагування телефонів"""
         for phone in self.phones:
             if phone.value == old_phone:
                 phone.value = Phone(new_phone).value
@@ -93,6 +96,7 @@ class Record:
         )
 
     def find_phone(self, search_phone):
+        """Пошук телефону"""
         for phone in self.phones:
             if phone.value == search_phone:
                 return phone
@@ -104,12 +108,15 @@ class Record:
 
 class AddressBook(UserDict):
     def add_record(self, record):
+        """Додавання записів"""
         self.data[record.name.value] = record
 
     def find(self, name):
+        """Пошук записів за іменем"""
         return self.data.get(name, None)
 
     def delete(self, name):
+        """Видалення записів за іменем"""
         if name in self.data:
             del self.data[name]
 
